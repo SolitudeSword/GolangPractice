@@ -27,59 +27,55 @@ type ListNode struct {
 }
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
-	jinwei := false
-	ret := &ListNode{0, nil}
+	jinwei := 0
+	ret := &ListNode{-1, nil}
 	curRet := ret
-	l1Point, l2Point := l1, l2
-	for l1Point != nil && l2Point != nil {
-		sum := l1Point.Val + l2Point.Val
-		if jinwei {
-			sum++
-		}
-		curRet.Next = &ListNode{sum % 10, nil}
-		curRet = curRet.Next
-		if sum >= 10 {
-			jinwei = true
+	for l1 != nil && l2 != nil {
+		sum := l1.Val + l2.Val + jinwei
+		if curRet.Val >= 0 {
+			curRet.Next = &ListNode{sum % 10, nil}
+			curRet = curRet.Next
 		} else {
-			jinwei = false
+			curRet.Val = sum % 10
 		}
-		l1Point = l1Point.Next
-		l2Point = l2Point.Next
+		jinwei = sum / 10
+		l1 = l1.Next
+		l2 = l2.Next
 	}
 
-	if l1Point != nil {
-		curRet.Next = l1Point
-		if jinwei {
-			l1Point.Val++
-			for l1Point.Next != nil && l1Point.Val >= 10 {
-				l1Point.Val = 0
-				l1Point = l1Point.Next
-				l1Point.Val++
+	if l1 != nil {
+		curRet.Next = l1
+		if jinwei > 0 {
+			l1.Val++
+			for l1.Next != nil && l1.Val >= 10 {
+				l1.Val = 0
+				l1 = l1.Next
+				l1.Val++
 			}
-			if l1Point.Val >= 10 {
-				l1Point.Val = 0
-				l1Point.Next = &ListNode{1, nil}
-			}
-		}
-	} else if l2Point != nil {
-		curRet.Next = l2Point
-		if jinwei {
-			l2Point.Val++
-			for l2Point.Next != nil && l2Point.Val >= 10 {
-				l2Point.Val = 0
-				l2Point = l2Point.Next
-				l2Point.Val++
-			}
-			if l2Point.Val >= 10 {
-				l2Point.Val = 0
-				l2Point.Next = &ListNode{1, nil}
+			if l1.Val >= 10 {
+				l1.Val = 0
+				l1.Next = &ListNode{1, nil}
 			}
 		}
-	} else if jinwei {
+	} else if l2 != nil {
+		curRet.Next = l2
+		if jinwei > 0 {
+			l2.Val++
+			for l2.Next != nil && l2.Val >= 10 {
+				l2.Val = 0
+				l2 = l2.Next
+				l2.Val++
+			}
+			if l2.Val >= 10 {
+				l2.Val = 0
+				l2.Next = &ListNode{1, nil}
+			}
+		}
+	} else if jinwei > 0 {
 		curRet.Next = &ListNode{1, nil}
 	}
 
-	return ret.Next
+	return ret
 }
 
 func TestAddTwoNumbers(t *testing.T) {
